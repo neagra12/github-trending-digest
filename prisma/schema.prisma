@@ -1,0 +1,52 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subscriber {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  languages     String[] // Array of programming languages
+  frequency     String   @default("daily") // daily, weekly, realtime
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([email])
+  @@index([isActive])
+}
+
+model Repository {
+  id            String   @id @default(cuid())
+  fullName      String   @unique // e.g., "vercel/next.js"
+  description   String?  @db.Text
+  language      String?
+  stars         Int
+  todayStars    Int      @default(0)
+  url           String
+  readme        String?  @db.Text
+  aiSummary     String?  @db.Text
+  scrapedAt     DateTime @default(now())
+  trendingDate  DateTime @default(now())
+
+  @@index([language])
+  @@index([trendingDate])
+  @@index([fullName])
+}
+
+model DigestLog {
+  id          String   @id @default(cuid())
+  sentAt      DateTime @default(now())
+  totalRepos  Int
+  totalEmails Int
+  status      String   // success, failed, partial
+  errorMsg    String?  @db.Text
+
+  @@index([sentAt])
+}
