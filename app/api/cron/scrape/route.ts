@@ -22,7 +22,10 @@ export async function GET(request: NextRequest) {
     // Get all unique languages from active subscribers
     const subscribers = await prisma.subscriber.findMany({
       where: { isActive: true },
-      select: { languages: true }
+      select: { 
+        email: true,
+        languages: true 
+      }
     });
 
     const allLanguages = new Set<string>();
