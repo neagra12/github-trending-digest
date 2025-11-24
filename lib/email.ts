@@ -30,15 +30,20 @@ export async function sendDigestEmail(
     const html = generateEmailHTML(repos, subscriberLanguages);
     
     console.log('📨 Sending via Resend...');
-    const data = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: 'TrendWatch AI <onboarding@resend.dev>', // Using Resend's test domain
       to: [to],
       subject: `🔥 ${repos.length} Trending ${subscriberLanguages.join(', ')} Repos Today`,
       html: html,
     });
 
+    if (error) {
+      console.error('❌ Resend error:', error);
+      return { success: false, error };
+    }
+
     console.log('✅ Resend response:', data);
-    return { success: true, messageId: data.id, resendData: data };
+    return { success: true, messageId: data?.id, resendData: data };
   } catch (error) {
     console.error('❌ Email send error:', error);
     console.error('Error details:', JSON.stringify(error, null, 2));
