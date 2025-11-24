@@ -27,7 +27,7 @@ export async function sendDigestEmail(
     console.log('📧 Preparing email for:', to);
     console.log('🔑 API Key exists:', !!process.env.RESEND_API_KEY);
     
-    const html = generateEmailHTML(repos, subscriberLanguages);
+    const html = generateEmailHTML(repos, subscriberLanguages, to);
     
     console.log('📨 Sending via Resend...');
     const { data, error } = await resend.emails.send({
@@ -51,7 +51,7 @@ export async function sendDigestEmail(
   }
 }
 
-function generateEmailHTML(repos: RepoForEmail[], languages: string[]): string {
+function generateEmailHTML(repos: RepoForEmail[], languages: string[], recipientEmail: string): string {
   const repoCards = repos.map(repo => `
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 24px; margin-bottom: 20px; color: white;">
       <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
@@ -130,7 +130,7 @@ function generateEmailHTML(repos: RepoForEmail[], languages: string[]): string {
           </p>
           <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin: 0;">
             <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}" style="color: rgba(255,255,255,0.7); text-decoration: underline;">Manage preferences</a> • 
-            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/unsubscribe?email=${encodeURIComponent(to)}" style="color: rgba(255,255,255,0.7); text-decoration: underline;">Unsubscribe</a>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/unsubscribe?email=${encodeURIComponent(recipientEmail)}" style="color: rgba(255,255,255,0.7); text-decoration: underline;">Unsubscribe</a>
           </p>
         </div>
 
